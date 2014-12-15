@@ -1354,9 +1354,12 @@ def translate_path_to_linux(path):
   while path.find('//') != -1:
     path = path.replace('//', '/')
 
-  # If this is /d/code/gynvael/, switch it to /i/code/gynvael.
-  if path.startswith("/d/code/gynvael/") or path == "/d/code/gynvael":
-    path = "/i/code/gynvael" + path[15:]
+  # CONFIGURE HERE
+  # Example of how to handle a link:
+  # If this is /d/link/, switch it to /i/link/.
+  #if path.startswith("/d/link/") or path == "/d/link":
+  #  path = "/i/link" + path[7:]
+  # END OF CONFIGURE
 
   # Done.
   Log(LOG_INFO, "translate-path: [C] \"%s\" -> \"%s\"" % (
@@ -1369,16 +1372,16 @@ def translate_path_to_windows(path):
 
   initial_path = path
 
+  # CONFIGURE HERE  
   # Is this one of the windows drives?
-  windows_drives_links  = [ "/c/", "/d/", "/e/", "/i/", "/w/", "/b/" ]
+  windows_drives_links  = [ "/c/", "/d/", "/e/", "/i/" ]
   windows_drives_mounts = [
       "/media/sf_C_DRIVE/",
       "/media/sf_D_DRIVE/",
       "/media/sf_E_DRIVE/",
       "/media/sf_I_DRIVE/",
-      "/media/sf_W_DRIVE/",
-      "/media/sf_B_DRIVE/"      
       ]
+  # END OF CONFIGURE  
 
   is_in_links  = filter(path.startswith, windows_drives_links)
   is_in_mounts = filter(path.startswith, windows_drives_mounts)
