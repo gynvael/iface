@@ -88,7 +88,7 @@ CMDS={
 # TODO move this to some kind of config.
 # TODO do the same in ifaceclientlib.py
 # IPs of HOST and VM (in that order)
-REMOTE_IP_LIST = ( "192.168.56.1", "192.168.56.198" )
+REMOTE_IP_LIST = ( "192.168.56.1", "192.168.56.3" )
 BIND_PORT = 33321
 
 LOG_LEVEL = LOG_DEBUG
