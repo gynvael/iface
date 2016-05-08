@@ -1465,9 +1465,16 @@ def CMD_l_cmd(info, cwd):
   command = "(cd '%s'; /usr/local/bin/gnome-terminal &)" % cwd
 
   # Spawn.
-  return subprocess.call(command, shell=True)
+  if subprocess.call(command, shell=True) == 0:
+    # subprocess.call by default returns 0 with process success return code.
+    # Unfortunately, ifaceclientlib will understand such status as a false and
+    # will thrown an exception as a result.
+    return "1"
+  else:
+    return "0"
 
 # -------------------------------------------------------------------
 # Everything else is in main.
 sys.exit(Main())
+
 
