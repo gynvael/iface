@@ -148,6 +148,7 @@ def NetHelperRecv(sock):
   # Receive 4 bytes.
   size_data = NetHelperRecvNBytes(sock, 4)
   if size_data == False:
+    Log(LOG_ERROR, "couldn't receive 4 bytes")
     return False
 
   size = struct.unpack("I", size_data)[0]
@@ -155,6 +156,7 @@ def NetHelperRecv(sock):
   # Receive packet.
   data = NetHelperRecvNBytes(sock, size)
   if data == False:
+    Log(LOG_ERROR, "couldn't receive data with size:" + str(size))
     return False
 
   Log(LOG_DEBUG, "recv packet of %u len from %s" % (
@@ -168,6 +170,7 @@ def NetHelperRecv(sock):
     return False
 
   # Done.
+  Log(LOG_DEBUG, "data == '%s'" % str(data))
   return data
 
 # -------------------------------------------------------------------

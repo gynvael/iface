@@ -77,6 +77,9 @@ LOG_DEBUG   = 10
 # Please put the same string in ifaceclientlib.py
 SECRET = ""
 
+# Specify your default, fallback home directory at VM
+HOME_PATH_ON_VM="/home/gynvael"
+
 CMDS={
     "iface-info"    : "CMD_iface_info", # Returns some info.
     "iface-ping"    : "CMD_ping",       # Returns "pong"
@@ -1455,16 +1458,23 @@ def CMD_l_cmd(info, cwd):
 
     # Default?
     if not cwd:
-      cwd = "/home/gynvael"
+      cwd = HOME_PATH_ON_VM
 
   # Spawn the terminal.
   cwd = cwd.replace("'", "\\'")
   command = "(cd '%s'; /usr/local/bin/gnome-terminal &)" % cwd
 
   # Spawn.
-  return subprocess.call(command, shell=True)
+  if subprocess.call(command, shell=True) == 0:
+    # subprocess.call by default returns 0 with process success return code.
+    # Unfortunately, ifaceclientlib will understand such status as a false and
+    # will thrown an exception as a result.
+    return "1"
+  else:
+    return "0"
 
 # -------------------------------------------------------------------
 # Everything else is in main.
 sys.exit(Main())
+
 
