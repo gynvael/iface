@@ -110,6 +110,7 @@ import subprocess
 import sys
 import time
 import threading
+import fcntl
 
 print "Windows/Linux iface by gynvael.coldwind//vx"
 
@@ -152,7 +153,7 @@ EVENT_CLOSE_CTRL_CHANNEL = threading.Event()
 
 # Host? Then we need another import
 if IFACE == IFACE_HOST:
-  import win32api
+  import ctypes
 
 
 # -------------------------------------------------------------------
@@ -740,6 +741,10 @@ class ThreadGuardCtrl(threading.Thread):
 
       # Try to connect.
       s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+      if IFACE == IFACE_VM:
+        flags = fcntl.fcntl(s.fileno(), fcntl.F_GETFD)
+        fcntl.fcntl(s.fileno(), fcntl.F_SETFD, flags | fcntl.FD_CLOEXEC)
+
       try:
         s.connect((REMOTE_IP_LIST[0], BIND_PORT))
 
@@ -1122,6 +1127,10 @@ def Main():
 def CreateListeningSocket(bind_ip, bind_port):
 
   s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  if IFACE == IFACE_VM:
+    flags = fcntl.fcntl(s.fileno(), fcntl.F_GETFD)
+    fcntl.fcntl(s.fileno(), fcntl.F_SETFD, flags | fcntl.FD_CLOEXEC)
+
   s.bind((bind_ip, bind_port))
   s.listen(5)
 
@@ -1434,7 +1443,7 @@ def CMD_openurl(info, url):
     return (False, "unsupported url type")
 
   # Pass to the shell.
-  win32api.ShellExecute(0, 'open', url, None, "", 1)
+  ctypes.windll.shell32.ShellExecuteA(0, 'open', url, None, "", 1)  
   
   # Done.
   return True
