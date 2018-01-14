@@ -1472,7 +1472,7 @@ def CMD_l_cmd(info, cwd):
 
   # Spawn the terminal.
   cwd = cwd.replace("'", "\\'")
-  command = "(cd '%s'; /usr/local/bin/gnome-terminal &)" % cwd
+  command = "(cd '%s'; /usr/bin/gnome-terminal &)" % cwd
 
   # Spawn.
   if subprocess.call(command, shell=True) == 0:
