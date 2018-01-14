@@ -110,7 +110,8 @@ import subprocess
 import sys
 import time
 import threading
-import fcntl
+if sys.platform != 'win32':
+  import fcntl
 
 print "Windows/Linux iface by gynvael.coldwind//vx"
 
