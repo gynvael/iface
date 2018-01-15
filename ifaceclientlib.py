@@ -16,6 +16,7 @@ import StringIO
 import struct
 import sys
 import threading
+from ifaceconfiglib import cfg 
 
 # Constants for debug level in CONFIGURATION section.
 LOG_ERROR   =  0
@@ -25,17 +26,12 @@ LOG_VERBOSE =  5
 LOG_DEBUG   = 10
 
 # -------------------------------------------------------------------
-# CONFIGURATION (please set this up before first use)
+# CONFIGURATION (set values from config file)
 # -------------------------------------------------------------------
 
-# Put some random string here. It will be used as poor man's authentication.
-# Please put the same string in iface.py
-SECRET = ""  
-
-# TODO move this to some kind of config.
-# TODO do the same in iface.py
-# IPs of HOST and VM (in that order)
-BIND_PORT = 33321
+SECRET = cfg.get('main', 'secret')
+BIND_PORT = cfg.getInt('main', 'bind_port')
+ 
 LOG_LEVEL = LOG_DEBUG
 
 # -------------------------------------------------------------------
@@ -45,8 +41,7 @@ LOG_LEVEL = LOG_DEBUG
 if len(SECRET) == 0:
   print "This is your time running Windows/Linux iface. You first need to set "
   print "some things up before you can use it."
-  print "Please open iface.py and ifaceclientlib.py and read the top comments on"
-  print "how to begin."
+  print "Please open iface.cfg and set needed values."
   sys.exit(1)
 
 # -------------------------------------------------------------------

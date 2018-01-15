@@ -69,37 +69,6 @@ LOG_INFO    =  3
 LOG_VERBOSE =  5
 LOG_DEBUG   = 10
 
-# -------------------------------------------------------------------
-# CONFIGURATION (please set this up before first use)
-# -------------------------------------------------------------------
-
-# Put some random string here. It will be used as poor man's authentication.
-# Please put the same string in ifaceclientlib.py
-SECRET = ""
-
-# Specify your default, fallback home directory at VM
-HOME_PATH_ON_VM="/home/gynvael"
-
-CMDS={
-    "iface-info"    : "CMD_iface_info", # Returns some info.
-    "iface-ping"    : "CMD_ping",       # Returns "pong"
-    "iface-openurl" : "CMD_openurl",    # Opens http or https url.
-    "iface-l-cmd"   : "CMD_l_cmd",      # Spawns a linux console.
-    "translate-path": "CMD_translate_path", # Translates path.
-    }
-
-# TODO move this to some kind of config.
-# TODO do the same in ifaceclientlib.py
-# IPs of HOST and VM (in that order)
-REMOTE_IP_LIST = ( "192.168.56.1", "192.168.56.3" )
-BIND_PORT = 33321
-
-LOG_LEVEL = LOG_DEBUG
-
-# -------------------------------------------------------------------
-# End of constants / configs.
-# -------------------------------------------------------------------
-
 import os
 import pickle
 import select
@@ -112,6 +81,30 @@ import time
 import threading
 if sys.platform != 'win32':
   import fcntl
+from ifaceconfiglib import cfg
+
+# -------------------------------------------------------------------
+# CONFIGURATION (set values from config file)
+# -------------------------------------------------------------------
+
+SECRET = cfg.get('main', 'secret')
+HOME_PATH_ON_VM = cfg.get('main', 'home_path')
+BIND_PORT = cfg.getInt('main', 'bind_port')
+TERMINAL_CMD = cfg.get('main', 'terminal_cmd')
+REMOTE_IP_LIST = eval(cfg.get('main', 'remote_ip_list'))
+
+CMDS={
+    "iface-info"    : "CMD_iface_info", # Returns some info.
+    "iface-ping"    : "CMD_ping",       # Returns "pong"
+    "iface-openurl" : "CMD_openurl",    # Opens http or https url.
+    "iface-l-cmd"   : "CMD_l_cmd",      # Spawns a linux console.
+    "translate-path": "CMD_translate_path", # Translates path.
+    }
+
+LOG_LEVEL = LOG_DEBUG
+# -------------------------------------------------------------------
+# End of constants / configs.
+# -------------------------------------------------------------------
 
 print "Windows/Linux iface by gynvael.coldwind//vx"
 
@@ -123,8 +116,7 @@ def Usage():
 if len(SECRET) == 0:
   print "This is your time running Windows/Linux iface. You first need to set "
   print "some things up before you can use it."
-  print "Please open iface.py and ifaceclientlib.py and read the top comments on"
-  print "how to begin."
+  print "Please open iface.cfg and set needed values."
   sys.exit(1)
 
 if len(sys.argv) != 2:
@@ -1348,7 +1340,7 @@ def translate_path_to_linux(path):
   if not path[0].upper() in ['C', 'D', 'E', 'I', 'W', 'B']:
 
     # Nothing we can do.
-    path = "/home/gynvael/"
+    path = HOME_PATH_ON_VM
 
     # Done.
     Log(LOG_INFO, "translate-path: [!] \"%s\" -> \"%s\"" % (
@@ -1472,7 +1464,7 @@ def CMD_l_cmd(info, cwd):
 
   # Spawn the terminal.
   cwd = cwd.replace("'", "\\'")
-  command = "(cd '%s'; /usr/local/bin/gnome-terminal &)" % cwd
+  command = "(cd '%s'; %s &)" % (cwd, TERMINAL_CMD)
 
   # Spawn.
   if subprocess.call(command, shell=True) == 0:
